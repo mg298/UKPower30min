@@ -6,6 +6,8 @@ from pandas_functions import read_pqt_with_lock, write_pqt_with_lock, combine_df
 import pandas as pd
 import numpy as np
 
+import matplotlib.pyplot as plt
+
 def dir_one_up():
     current_directory   =   os.path.dirname(__file__)
     parent_directory    =   os.path.dirname(current_directory)
@@ -51,7 +53,7 @@ def next_row_col(row, col, max_row, max_col):
         raise ValueError("Row index exceeds the maximum row index")
     return row, col
 
-def plot_pnl(ax, dates, pnl, title_desc, x_label, y_label, desc_pnl, scatter_plt, add_y_eq_x):
+def plot_pnl(ax, dates, pnl, title_desc, x_label, y_label, desc_pnl, scatter_plt):
     """
     Plot profit and loss (pnl) data on the provided axes.
 
@@ -64,7 +66,6 @@ def plot_pnl(ax, dates, pnl, title_desc, x_label, y_label, desc_pnl, scatter_plt
         y_label (str): Label for the y-axis.
         desc_pnl (str): Description for the pnl data.
         scatter_plt (bool): Whether to use scatter plot or line plot.
-        add_y_eq_x (bool): Whether to add y=x line for comparison.
 
     Returns:
         None
@@ -72,11 +73,6 @@ def plot_pnl(ax, dates, pnl, title_desc, x_label, y_label, desc_pnl, scatter_plt
     if scatter_plt:
         ax.scatter(dates, pnl, label=desc_pnl)
         ax.axhline(0, color='gray', linestyle='--')
-        if add_y_eq_x:
-            max_v   =   np.max(pnl)
-            min_v   =   np.min(pnl)
-            ax.plot([min_v, max_v], [min_v, max_v], 'k--')
-            ax.axvline(0, color='gray', linestyle='--')
     else:
         ax.plot(dates, pnl, label=desc_pnl)
     ax.set_title(title_desc)
@@ -85,15 +81,17 @@ def plot_pnl(ax, dates, pnl, title_desc, x_label, y_label, desc_pnl, scatter_plt
     ax.legend()
 
 def print_paper_trading(time_forwards_vec, start_datetime):
+    # Read and process order data
     file_name_orders=   dir_orders()    +   "/Combined.pqt"
     df_orders       =   combine_dfs(file_name_orders, dir_orders()+"/", ".pqt")
     df_orders       =   df_orders[df_orders.index>=start_datetime]
     df_orders.index =   df_orders.index.ceil('30T')
     
+    # Read Elexon DETSYSPRICES data
     file_name_dsp   =   dir_dsp()    +   "/Combined.pqt"
     df_dsp_orig     =   combine_dfs(file_name_dsp, dir_dsp()+"/", ".pqt")
 
-    import matplotlib.pyplot as plt
+    # Plotting
     for time_forwards in time_forwards_vec:
         imb_desc    =   main_ps_str()
         mkt_desc    =   market_ps_str()
@@ -109,35 +107,31 @@ def print_paper_trading(time_forwards_vec, start_datetime):
 
         cols    =   [imb_desc, mkt_desc]
         df_dsp  =   df_dsp_orig.copy()
-        df_dsp.index    =   df_dsp.index    -   pd.Timedelta(minutes=time_forwards)
-        merged          =   pd.merge(df_orders, df_dsp[cols], left_index=True, right_index=True, how='left')
-        merged.dropna(subset=cols, inplace=True)
+        df_dsp.index    -=  pd.Timedelta(minutes=time_forwards)
+        merged          =   pd.merge(df_orders, df_dsp[cols], left_index=True, right_index=True, how='left').dropna(subset=cols)
 
         # add on results to df_orders by looking up in merged
         payoff_desc =   "imbal_min_mkt"
         merged[payoff_desc]  =   (merged[imb_desc]    -   merged[mkt_desc])*0.5 #   half because it's a half hour auction
 
-        for j in range(0,2):    #   0 is PNL, 1 is traded turnover
-            strat_desc  =   "FullStrat"
-            posn_live   =   merged["Posn"]
-
-            traded      =   None
+        posn_live   =   merged["Posn"]
+        for j, desc in enumerate(["Cum Gross PNL", "Vol traded"]):
             if j==0:
                 merged.to_csv("pnl_file" + str(time_forwards)  +   ".csv")
             row, col    =   next_row_col(row, col, num_rows, num_cols)
             desc_live   =   "Live"
             if j==0:
-                pnl_cumsum_live  =   np.cumsum(merged[payoff_desc]*posn_live*0.5)
-                plot_pnl(axs[row, col], merged.index, pnl_cumsum_live, "cum Gross " + strat_desc, "Date", \
-                                "PNL", desc_live, False, False)
+                pnl_cumsum_live =   np.cumsum(merged[payoff_desc]*posn_live)
+                plot_pnl(axs[row, col], merged.index, pnl_cumsum_live, desc, "Date", \
+                                "PNL", desc_live, False)
             else:
-                traded_cc_live      =   np.cumsum(np.fabs(posn_live))
-                plot_pnl(axs[row, col], merged.index, traded_cc_live, "vol traded " + strat_desc, "Date", \
-                            "amount traded", desc_live, False, False)
+                traded          =   np.cumsum(np.fabs(posn_live))
+                plot_pnl(axs[row, col], merged.index, traded, desc, "Date", \
+                            "amount traded", desc_live, False)
 
         row, col    =   next_row_col(row, col, num_rows, num_cols)
-        plot_pnl(axs[row, col], merged.index, merged["Posn"], "Posn " + strat_desc, "Date", \
-            "Posn", desc_live, True, False)
+        plot_pnl(axs[row, col], merged.index, merged["Posn"], "Posn ", "Date", \
+            "Posn", desc_live, True)
 
         fig.autofmt_xdate()
         file_name   =   "Pnl"  +   str(time_forwards)
