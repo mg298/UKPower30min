@@ -1,5 +1,5 @@
 # UKPower30min
-UKPower forecasts every 30min. Public
+UKPower forecasts every 30min.
 
 UK electricity forecasts/positions for UK electricity (Elexon) imbalance prices.
 
