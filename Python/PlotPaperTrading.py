@@ -9,7 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def dir_one_up():
-    current_directory   =   os.path.dirname(__file__)
+    current_directory   =   os.path.dirname(os.path.abspath(__file__))
+    assert current_directory!=""
     parent_directory    =   os.path.dirname(current_directory)
     return parent_directory
 
