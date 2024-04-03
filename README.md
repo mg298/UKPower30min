@@ -20,5 +20,5 @@ INDEX                           MAIN PRICE SUMMARY  MARKET PRICE SUMMARY
 time_stamp                                                         
 2023-03-21 00:30:00+00:00                80.0                  99.0
 
-
-Speak about processing of results - forecasts and P&L calc
+Code: /Python
+If you run PlotPaperTrading.py it should generate five files, each containing three graphs. The five files correspond to how many minutes the forecast must be generated before using trading at the Imbalance price. I believe the correct feasible length is 90min, as you must orders for an auction (at EPEXSpot/Nordpool) are permitted up to one hour before the auction begins, and the auction lasts for 30mins. Ie plots for 30min and 60min are unachievable. 90min is what matters, and the longer durations are included to see how sensitive it is to latency.
