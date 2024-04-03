@@ -1,24 +1,36 @@
-# UKPower30min
-UK electricity forecasts/positions for UK electricity (Elexon) imbalance prices.
+Forecasting UK Electricity Imbalance Prices
 
-In the UK, every 30minutes, there is an auction for wholesale electricity. A participant buys (sells) electricity in this auction at an agreed price, which is set by the price you match at at the exchange (EPEXSpot/NordPool). If the participant does not consume (produce) all the electricity agreed during this 30min window, there is an imbalance, which must be settled at an 'imbalance price' set by Elexon (https://www.elexon.co.uk/settlement/imbalance-pricing/). For this code, in Elexon DETSYSPRICES (https://bscdocs.elexon.co.uk/guidance-notes/bmrs-api-and-data-push-user-guide), the buyer buys electricity at price "MARKET PRICE SUMMARY" (proxy for exchange price) and sells at "MAIN PRICE SUMMARY" (which is "imbalancePriceAmountGBP"). Historical data for exchange price is not available cannot be redistributed for free. When I have looked at the exchange price, it has been slightly (but statistically significantly) favourable compared to the Elexon distributed "MARKET PRICE SUMMARY".
+In the UK, wholesale electricity is traded every 30 minutes through auctions facilitated by exchanges such as EPEXSpot/NordPool. Participants buy or sell electricity at agreed prices set by the exchange. If a participant fails to consume or produce the agreed-upon electricity within the 30-minute window, an imbalance occurs, which must be settled at a price determined by Elexon.
 
-Time lags: Auctions begin on the hour and half hour throughout the day. The current system is run on a server about 40 seconds before last orders are permitted for each auction (excluding issues near midnight). Consider the situation at 03:00:00 - data is uploaded at about 02:59:21, which allows an order to be send before the 03:00:00 cutoff. This could be used for the auction beginning 04:00:00 and finishing at 04:30:00 and the results for this are not seen until some time between 04:30:00 - 04:59:00.
+Data Sources:
 
-File formats: parquet files
-/Orders/2023_11_23.pqt, data
-INDEX is the GMT time we received the data at
-latest_dp_datetime is the GMT time as we'd expect to see this from Elexon data (ie rounded up to 30mins)
-INDEX                                       latest_dp_datetime   Posn
-2024-02-09 00:59:19.940719+00:00 2024-02-09 01:00:00+00:00       3.3
+Elexon DETSYSPRICES provides information on imbalance prices and a proxy for exchange prices.
+Historical data for exchange prices is unavailable due to redistribution constraints.
 
-Available from Elexon historically and live
-/DETSYSPRICES/
-INDEX                           MAIN PRICE SUMMARY  MARKET PRICE SUMMARY
-time_stamp                                                         
-2023-03-21 00:30:00+00:00                80.0                  99.0
+We will use DETSYSPRICES "MAIN PRICE SUMMARY" as the imbalance price and "MARKET PRICE SUMMARY" as the proxy for the exchange price (EPEXSpot/Nord Pool).
 
-Code: /Python
-If you run PlotPaperTrading.py it should generate five files, each containing three graphs. The five files correspond to how many minutes the forecast must be generated before trading at the Imbalance price. I believe the correct feasible length is 90min, as you orders for an auction (at EPEXSpot/Nordpool) are permitted up to one hour before the auction begins, and the auction lasts for 30mins. Ie plots for 30min and 60min are unachievable. 90min is what matters, and the longer durations are included to see how sensitive it is to latency. The files are of the form "Pnl90.png" etc.
+Time Lags:
 
-The position and price data should be available in git about 35s before last orders for the auction are permitted. The code to generate the orders / stream the data is not on github.
+Auctions occur hourly and half-hourly throughout the day. The system updates approximately 40 seconds before each auction's cutoff time, excluding issues near midnight. For instance, data uploaded at 02:59:21 pertains to the auction starting at 04:00:00 and ending at 04:30:00, with results available between 04:30:00 and 04:59:00.
+
+File Formats:
+
+Data is stored in Parquet files:
+
+/Orders/YYYY_MM_DD.pqt: Contains order data.
+
+INDEX: GMT time of data receipt.
+latest_dp_datetime: Expected GMT time rounded up to 30 minutes.
+Posn: Position data.
+/DETSYSPRICES/: Provides historical and live imbalance prices.
+
+INDEX: Time stamp.
+MAIN PRICE SUMMARY: Imbalance price.
+MARKET PRICE SUMMARY: Exchange price (historically not available).
+Code:
+
+Executing PlotPaperTrading.py generates five files, each with three graphs. The files represent the forecast lead times before trading at the imbalance price. While shorter durations (30 and 60 minutes) are impractical due to auction timings, the primary focus is on the 90-minute forecast. Longer durations are included to assess sensitivity to latency.
+
+Position and price data are available in Git approximately 35 seconds before the auction's last orders.
+
+The code for generating orders/data streaming is not available on GitHub.
