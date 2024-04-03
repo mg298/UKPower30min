@@ -8,7 +8,9 @@ In the UK, every 30minutes, there is an auction for wholesale electricity. A par
 EXAMPLE of time lags: the current system is run on a server about 40seconds before last orders are permitted for each auction (excluding issues near midnight). Consider the situation at 03:00:00 - data is uploaded at about 02:59:21, which allows an order to be send before the 03:00:00 cutoff. This could be used for the auction beginning 04:00:00 and finishing at 04:30:00 and the results for this are not seen until some time between 04:30:00 - 04:59:00.
 
 File formats: parquet files
-/Orders/2023_11_23.pqt, data 
+/Orders/2023_11_23.pqt, data
+INDEX is the GMT time we received the data at
+latest_dp_datetime is the GMT time as we'd expect to see this from Elexon data (ie rounded up to 30mins)
 INDEX                                       latest_dp_datetime   Posn
 2024-02-09 00:59:19.940719+00:00 2024-02-09 01:00:00+00:00       3.3
 
