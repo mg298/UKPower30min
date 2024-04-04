@@ -33,7 +33,7 @@ Executing PlotPaperTrading.py generates five files, each with three graphs. The 
 
 Position and price data are available in Git approximately 35 seconds before the auction's last orders.
 
-Ubuntu:
+Ubuntu 22.03:
 you will need numpy, pandas, pyarrow
 sudo apt-get update
 sudo apt install python3-numpy python3-pandas
