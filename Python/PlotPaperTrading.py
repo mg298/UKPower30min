@@ -110,6 +110,7 @@ def print_paper_trading(time_forwards_vec, start_datetime):
         df_dsp  =   df_dsp_orig.copy()
         df_dsp.index    -=  pd.Timedelta(minutes=time_forwards)
         merged          =   pd.merge(df_orders, df_dsp[cols], left_index=True, right_index=True, how='left').dropna(subset=cols)
+        merged.index    =   pd.to_datetime(merged.index)
 
         # add on results to df_orders by looking up in merged
         payoff_desc =   "imbal_min_mkt"
