@@ -27,13 +27,13 @@ Posn: Position volume.
 
 INDEX: GMT Time stamp.
 MAIN PRICE SUMMARY: Imbalance price.
-MARKET PRICE SUMMARY: Exchange price (historically not available).
+MARKET PRICE SUMMARY: proxy for Exchange price.
 
 Code:
 
-Executing PlotPaperTrading.py generates five files, each with three graphs. The files represent the forecast lead times before trading at the imbalance price. While shorter durations (30 and 60 minutes) are infeasible due to auction timings, the primary focus is on the 90-minute forecast. Longer durations are included to assess sensitivity to latency.
+Executing plot_paper_trading.py generates five files, each with three graphs. The files represent the forecast lead times before trading at the imbalance price. While shorter durations (30 and 60 minutes) are infeasible due to auction timings, the primary focus is on the 90-minute forecast. Longer durations are included to assess sensitivity to latency.
 
-Position and price data are available in Git approximately 35 seconds before the auction's last orders.
+Position and price data are available in Git approximately 35 seconds before the auction's last orders are permitted.
 
 Ubuntu 22.03:
 you will need numpy, pandas, pyarrow
@@ -52,4 +52,4 @@ python3 PlotPaperTrading.py
 
 The code for generating orders/data streaming is not available on GitHub.
 
-System has been running in a stable form since Dec-2023.
+System has been running in a 'stable' form since Dec-2023.
