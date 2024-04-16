@@ -50,6 +50,6 @@ git clone https://github.com/mg298/UKPower30min.git .
 cd Python
 python3 PlotPaperTrading.py 
 
-The code for generating orders/data streaming is not available on GitHub.
+The code for generating orders/data streaming is not available on GitHub. A related paper is https://research-information.bris.ac.uk/en/publications/trading-electricity-markets-using-neural-networks-2
 
 System has been running in a 'stable' form since Dec-2023.
