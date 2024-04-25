@@ -54,6 +54,6 @@ The code for generating orders/data streaming is not available on GitHub. A rela
 
 System has been running in a 'stable' form since Dec-2023.
 Sample Output:
-![Pnl_90](https://github.com/mg298/UKPower30min/assets/31728456/c09e3b14-0176-49b4-bad1-667075b96a39)
+
 
 
