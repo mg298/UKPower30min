@@ -1,4 +1,4 @@
-![image](https://github.com/mg298/UKPower30min/assets/31728456/46acdce9-119f-426b-92e5-635be50a2ab1)Forecasting UK Electricity Imbalance Prices
+Forecasting UK Electricity Imbalance Prices
 
 In the UK, wholesale electricity is traded every 30 minutes through auctions facilitated by exchanges such as EPEXSpot/Nord Pool. Participants buy or sell electricity at agreed prices through the exchange. If a participant fails to consume or produce the agreed-upon electricity within the 30-minute window, an imbalance volume occurs, which must be settled at an imbalance price determined by Elexon.
 
@@ -54,6 +54,4 @@ The code for generating orders/data streaming is not available on GitHub. A rela
 
 System has been running in a 'stable' form since Dec-2023.
 Sample Output:
-
-
-
+![Pnl_90](https://github.com/mg298/UKPower30min/assets/31728456/34bd87c1-7211-4ccc-b59b-cdb81b6bdf0b)
