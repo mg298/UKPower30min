@@ -48,7 +48,7 @@ mkdir workspace
 cd workspace
 git clone https://github.com/mg298/UKPower30min.git .
 cd Python
-python3 PlotPaperTrading.py 
+python3 plot_paper_trading.py 
 
 The code for generating orders/data streaming is not available on GitHub. A related paper is https://research-information.bris.ac.uk/en/publications/trading-electricity-markets-using-neural-networks-2
 
